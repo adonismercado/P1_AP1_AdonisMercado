@@ -1,5 +1,50 @@
-﻿<h3>RegistroIndex</h3>
+﻿@page "/Registro/Index"
 
+@inject RegistrosService registrosService
+@rendermode InteractiveServer
+
+<PageTitle>Registro</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		<div class="card-header space-between">
+			<h5 class="card-title">Registro</h5>
+			<a href="/Prestamo/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
+		</div>
+
+		<div class="card-body">
+
+			@*Labels*@
+			<div class="row">
+				@*Filtrar Por*@
+				<div class="col-3">
+					<label class="col-form-label">Filtrar Por</label>
+				</div>
+
+				@*Busqueda*@
+				<div class="col-4">
+					<label class="col-form-label">B&uacute;squeda</label>
+				</div>
+			</div>
+
+			@*Inputs y botones*@
+			<div class="row align-items-center">
+				<div class="col-3">
+					<InputSelect class="form-select" @bind-Value="Filtro">
+						<option value="" selected disabled>Elija una opci&oacute;n</option>
+						<option value="RegistroId">RegistroId</option>
+					</InputSelect>
+				</div>
+
+				<div class="col-4">
+					<div class="input-group">
+						<input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @code {
 
 }
