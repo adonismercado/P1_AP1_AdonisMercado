@@ -1,6 +1,7 @@
 using P1_AP1_AdonisMercado.Components;
 using P1_AP1_AdonisMercado.DAL;
 using Microsoft.EntityFrameworkCore;
+using P1_AP1_AdonisMercado.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddRazorComponents()
 var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlite(ConStr));
 
-
+builder.Services.AddScoped<RegistrosService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
