@@ -38,7 +38,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
             .AnyAsync(e => e.IdEntrada == idEntrada);
     }
 
-    public async Task<bool> Existe(EntradasHuacales entradasHuacales)
+    public async Task<bool> Guardar(EntradasHuacales entradasHuacales)
     {
         if (!await Existe(entradasHuacales.IdEntrada))
         {
