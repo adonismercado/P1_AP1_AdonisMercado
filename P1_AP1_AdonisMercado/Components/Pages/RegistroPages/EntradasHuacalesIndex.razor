@@ -1,0 +1,93 @@
+﻿@page "/EntradasHuacales/Index"
+
+@inject EntradaHuacalesService entradaHuacalesService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Index de Entradas de Huacales</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		<div class="card-header space-between">
+			<h5 class="card-title">Registro</h5>
+			<a href="/Prestamo/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
+		</div>
+
+		<div class="card-body">
+
+			@*Labels*@
+			<div class="row">
+				@*Filtrar Por*@
+				<div class="col-3">
+					<label class="col-form-label">Filtrar Por</label>
+				</div>
+
+				@*Busqueda*@
+				<div class="col-4">
+					<label class="col-form-label">B&uacute;squeda</label>
+				</div>
+			</div>
+			@*Inputs y botones*@
+			<div class="row align-items-center">
+				<div class="col-3">
+					<InputSelect class="form-select" @bind-Value="Filtro">
+						<option value="" selected disabled>Elija una opci&oacute;n</option>
+						<option value="RegistroId">RegistroId</option>
+					</InputSelect>
+				</div>
+
+				<div class="col-4">
+					<div class="input-group">
+						<input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+@code {
+	public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
+	public string Filtro { get; set; }
+	public string ValorFiltro { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.IdEntrada > 0);
+	}
+
+	public async Task Buscar()
+	{
+		if (!string.IsNullOrWhiteSpace(ValorFiltro))
+		{
+			if (Filtro == "IdEntrada" && int.TryParse(ValorFiltro, out var idEntrada))
+			{
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.IdEntrada == idEntrada);
+			}
+
+			if (Filtro == "NombreCliente")
+			{
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.NombreCliente.ToLower().Contains(ValorFiltro));
+			}
+
+			if (Filtro == "Cantidad" && int.TryParse(ValorFiltro, out var cantidad))
+			{
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Cantidad == cantidad);
+			}
+
+			if (Filtro == "Precio" && int.TryParse(ValorFiltro, out var precio))
+			{
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Precio == precio);
+			}
+
+			if (Filtro == "Fecha")
+			{
+				DateTime fechaFiltro = DateTime.Parse(ValorFiltro);
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date == fechaFiltro);
+			}
+		}
+		else
+		{
+			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.IdEntrada > 0);
+		}
+	}
+}
