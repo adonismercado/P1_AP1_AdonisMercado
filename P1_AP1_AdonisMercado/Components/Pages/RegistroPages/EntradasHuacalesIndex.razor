@@ -8,8 +8,8 @@
 <div class="container">
 	<div class="card shadow-lg">
 		<div class="card-header space-between">
-			<h5 class="card-title">Registro</h5>
-			<a href="/Prestamo/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
+			<h5 class="card-title">Entradas Huacales</h5>
+			<a href="/EntradasHuacales/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
 		</div>
 
 		<div class="card-body">
@@ -31,7 +31,11 @@
 				<div class="col-3">
 					<InputSelect class="form-select" @bind-Value="Filtro">
 						<option value="" selected disabled>Elija una opci&oacute;n</option>
-						<option value="RegistroId">RegistroId</option>
+						<option value="IdEntrada">IdEntrada</option>
+						<option value="NombreCliente">NombreCliente</option>
+						<option value="Cantidad">Cantidad</option>
+						<option value="Precio">Precio</option>
+						<option value="Fecha">Fecha</option>
 					</InputSelect>
 				</div>
 
@@ -42,6 +46,43 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="table-responsive">
+				<table class="table table-hover text-center align-middle">
+					<thead class="table table-striped text-black">
+						<tr>
+							<th>ID ENTRADA</th>
+							<th>NOMBRE CLIENTE</th>
+							<th>CANTIDAD</th>
+							<th>PRECIO</th>
+							<th>FECHA</th>
+							<th>OPCIONES</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						@foreach (var entradasHuacales in ListaEntradasHuacales)
+						{
+							<tr>
+								<td>@entradasHuacales.IdEntrada</td>
+								<td>@entradasHuacales.NombreCliente</td>
+								<td>@entradasHuacales.Cantidad</td>
+								<td>@entradasHuacales.Precio</td>
+								<td>@entradasHuacales.Fecha.ToString("dd/MM/yyyy")</td>
+								<td>
+									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
+										<span class="bi bi-pencil"></span>	
+									</a>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="card-footer space-between">
+			<label>Cantidad: @ListaEntradasHuacales.Count()</label>
 		</div>
 	</div>
 </div>
