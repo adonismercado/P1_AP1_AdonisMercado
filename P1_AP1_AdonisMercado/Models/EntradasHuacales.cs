@@ -17,6 +17,6 @@ public class EntradasHuacales
     public int Cantidad { get; set; }
 
     [Required(ErrorMessage = "Error: El precio es obligatorio.")]
-    public int Precio { get; set; }
+    public decimal Precio { get; set; }
 }
 

@@ -115,7 +115,7 @@
 				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Cantidad == cantidad);
 			}
 
-			if (Filtro == "Precio" && int.TryParse(ValorFiltro, out var precio))
+			if (Filtro == "Precio" && decimal.TryParse(ValorFiltro, out var precio))
 			{
 				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Precio == precio);
 			}
