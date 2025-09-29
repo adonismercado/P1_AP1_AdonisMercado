@@ -1,0 +1,48 @@
+﻿@page "/EntradasHuacales/Edit/{IdEntrada:int}"
+@inject EntradaHuacalesService entradaHuacalesService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+@code {
+	[Parameter]
+	public int IdEntrada { get; set; }
+
+	public EntradasHuacales EntradasHuacales { get; set; } = new EntradasHuacales();
+	public string errorMensaje { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (IdEntrada > 0)
+		{
+			EntradasHuacales = await entradaHuacalesService.Buscar(IdEntrada);
+		}
+	}
+
+	public async Task Guardar()
+	{
+		var modificado = await entradaHuacalesService.Guardar(EntradasHuacales);
+
+		if (modificado)
+		{
+			navigationManager.NavigateTo("/EntradasHuacales/Index");
+		}
+		else
+		{
+			errorMensaje = "No se pudo modificar la entrada correctamente.";
+		}
+	}
+
+	public async Task Eliminar()
+	{
+		var eliminado = await entradaHuacalesService.Eliminar(IdEntrada);
+
+		if (eliminado)
+		{
+			navigationManager.NavigateTo("EntradasHuacales/Index");
+		}
+		else
+		{
+			errorMensaje = "No se pudo eliminar la entrada correctamente.";
+		}
+	}
+}
