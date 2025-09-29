@@ -15,5 +15,10 @@ public class RegistrosService(IDbContextFactory<Contexto> DbFactory)
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<bool> Insertar(EntradasHuacales huacales)
+    {
+        
+    }
 }
 

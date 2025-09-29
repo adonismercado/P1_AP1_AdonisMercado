@@ -11,7 +11,7 @@ using P1_AP1_AdonisMercado.DAL;
 namespace P1_AP1_AdonisMercado.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20250929222053_Inicial")]
+    [Migration("20250929222358_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
