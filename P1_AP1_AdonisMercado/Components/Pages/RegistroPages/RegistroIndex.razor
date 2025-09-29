@@ -25,23 +25,6 @@
 					<label class="col-form-label">B&uacute;squeda</label>
 				</div>
 			</div>
-
-			@*Inputs y botones*@
-			<div class="row align-items-center">
-				<div class="col-3">
-					<InputSelect class="form-select" @bind-Value="Filtro">
-						<option value="" selected disabled>Elija una opci&oacute;n</option>
-						<option value="RegistroId">RegistroId</option>
-					</InputSelect>
-				</div>
-
-				<div class="col-4">
-					<div class="input-group">
-						<input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
-						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 </div>

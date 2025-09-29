@@ -8,7 +8,7 @@ public class EntradasHuacales
     public int IdEntrada { get; set; }
 
     [Required(ErrorMessage = "Error: La fecha es obligatoria.")]
-    public DateTime Fecha { get; set; } = DateTime.Now;\
+    public DateTime Fecha { get; set; } = DateTime.Now;
 
     [Required(ErrorMessage = "Error: El nombre del cliente es obligatorio.")]
     public string NombreCliente { get; set; }
