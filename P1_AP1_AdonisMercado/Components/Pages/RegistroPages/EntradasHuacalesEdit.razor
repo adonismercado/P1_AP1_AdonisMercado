@@ -55,10 +55,35 @@
 			</a>
 
 			<button type="submit" class="btn btn-primary bi bi-save"> Guardar</button>
-			<buttton type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</buttton>
+			<buttton type="button" class="btn btn-danger bi bi-trash" @onclick="MostrarModalEliminar"> Eliminar</buttton>
 		</div>
 	</div>
 </EditForm>
+
+@if (mostrarModal)
+{
+	<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header bg-danger text-white">
+					<h5 class="modal-title">Confirmar eliminación</h5>
+					<button type="button" class="btn-close" @onclick="CerrarModal"></button>
+				</div>
+
+				<div class="modal-body">
+					<p>¿Está seguro que desea eliminar la entrada del cliente <strong>@EntradasHuacales.NombreCliente</strong>?</p>
+				</div>
+
+				<div class="modal-footer">
+					<button class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+					<button class="btn btn-danger" @onclick="ConfirmarEliminar">
+						<span class="bi bi-trash"></span> Eliminar
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
 
 @code {
 	[Parameter]
@@ -66,6 +91,7 @@
 
 	public EntradasHuacales EntradasHuacales { get; set; } = new EntradasHuacales();
 	public string errorMensaje { get; set; } = string.Empty;
+	private bool mostrarModal = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -89,13 +115,24 @@
 		}
 	}
 
-	public async Task Eliminar()
+	public void MostrarModalEliminar()
+	{
+		mostrarModal = true;
+	}
+
+	public void CerrarModal()
+	{
+		mostrarModal = false;
+	}
+
+	public async Task ConfirmarEliminar()
 	{
 		var eliminado = await entradaHuacalesService.Eliminar(IdEntrada);
 
 		if (eliminado)
 		{
-			navigationManager.NavigateTo("EntradasHuacales/Index");
+			mostrarModal = false;
+			navigationManager.NavigateTo("/EntradasHuacales/Index");
 		}
 		else
 		{
