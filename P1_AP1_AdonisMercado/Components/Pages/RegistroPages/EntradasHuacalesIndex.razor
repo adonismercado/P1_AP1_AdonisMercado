@@ -125,12 +125,17 @@
 
 	public async Task Buscar()
 	{
-		if (FechaDesde.HasValue)
+		if (FechaDesde.HasValue && FechaHasta.HasValue)
+		{
+			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => 
+				e.Fecha.Date >= FechaDesde.Value.Date && 
+				e.Fecha.Date <= FechaHasta.Value.Date);
+		}
+		else if (FechaDesde.HasValue)
 		{
 			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date >= FechaDesde.Value.Date);
 		}
-
-		if (FechaHasta.HasValue)
+		else if (FechaHasta.HasValue)
 		{
 			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date <= FechaHasta.Value.Date);
 		}
