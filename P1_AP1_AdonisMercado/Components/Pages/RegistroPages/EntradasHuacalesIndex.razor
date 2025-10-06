@@ -45,11 +45,11 @@
 					</InputSelect>
 				</div>
 				<div class="col-2">
-					<input type="date" class="form-control" @bind="FechaDesde"/>
+					<input type="date" class="form-control" @bind="FechaDesde" />
 				</div>
 
 				<div class="col-2">
-					<input type="date" class="form-control" @bind="FechaHasta"/>
+					<input type="date" class="form-control" @bind="FechaHasta" />
 				</div>
 
 				<div class="col-2">
@@ -70,11 +70,11 @@
 				<table class="table table-hover text-center align-middle">
 					<thead class="table table-striped text-black">
 						<tr>
+							<th>Fecha</th>
 							<th>Id Entrada</th>
 							<th>Nombre Cliente</th>
 							<th>Cantidad</th>
 							<th>Precio</th>
-							<th>Fecha</th>
 							<th>Opciones</th>
 						</tr>
 					</thead>
@@ -83,14 +83,14 @@
 						@foreach (var entradasHuacales in ListaEntradasHuacales)
 						{
 							<tr>
+								<td>@entradasHuacales.Fecha.ToString("MM/dd/yyyy")</td>
 								<td>@entradasHuacales.IdEntrada</td>
 								<td>@entradasHuacales.NombreCliente</td>
 								<td>@entradasHuacales.Cantidad</td>
 								<td>@entradasHuacales.Precio</td>
-								<td>@entradasHuacales.Fecha.ToString("dd/MM/yyyy")</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
-										<span class="bi bi-pencil"></span>	
+										<span class="bi bi-pencil"></span>
 									</a>
 								</td>
 							</tr>
@@ -110,7 +110,7 @@
 	public string Filtro { get; set; }
 	public string ValorFiltro { get; set; }
 	public DateTime? FechaDesde { get; set; }
-	public DateTime? FechaHasta{ get; set; }
+	public DateTime? FechaHasta { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -122,7 +122,7 @@
 		if (FechaDesde.HasValue && FechaHasta.HasValue)
 		{
 			ListaEntradasHuacales = await entradaHuacalesService.Listar(
-				e => e.Fecha.Date >= FechaDesde.Value.Date && e.Fecha.Date <= FechaHasta.Value.Date);	
+				e => e.Fecha.Date >= FechaDesde.Value.Date && e.Fecha.Date <= FechaHasta.Value.Date);
 		}
 		else if (FechaDesde.HasValue)
 		{
