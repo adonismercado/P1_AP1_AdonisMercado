@@ -9,33 +9,15 @@
 	<div class="card shadow-lg">
 		<div class="card-header d-flex justify-content-between align-items-center">
 			<h5 class="card-title">Entradas Huacales</h5>
-			<a href="/EntradasHuacales/Create" class="btn btn-primary"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
+			<a href="/EntradasHuacales/Create" class="btn btn-success"> <span class="bi bi-plus-square mt-3"></span> Crear</a>
 		</div>
 
 		<div class="card-body">
-
-			@*Labels*@
-			<div class="row">
-				@*Filtrar Por*@
-				<div class="col-2">
-					<label class="col-form-label">Filtrar Por</label>
-				</div>
-
-				<div class="col-2">
-					<label class="col-form-label">Desde</label>
-				</div>
-
-				<div class="col-2">
-					<label class="col-form-label">Hasta</label>
-				</div>
-				@*Busqueda*@
-				<div class="col-4">
-					<label class="col-form-label">B&uacute;squeda</label>
-				</div>
-			</div>
 			@*Inputs y botones*@
-			<div class="row align-items-center">
-				<div class="col-2">
+			<div class="row align-items-center g-2">
+				<!--Filtrar Por-->
+				<div class="col-12 col-sm-6 col-md-2">
+					<label class="col-form-label">Filtrar Por</label>
 					<InputSelect class="form-select" @bind-Value="Filtro">
 						<option value="" selected disabled>Elija una opci&oacute;n</option>
 						<option value="IdEntrada">IdEntrada</option>
@@ -44,22 +26,30 @@
 						<option value="Precio">Precio</option>
 					</InputSelect>
 				</div>
-				<div class="col-2">
+
+				<!--Fecha Desde-->
+				<div class="col-12 col-sm-6 col-md-2">
+					<label class="col-form-label">Desde</label>
 					<input type="date" class="form-control" @bind="FechaDesde" />
 				</div>
 
-				<div class="col-2">
+				<!--Fecha Hasta-->
+				<div class="col-12 col-sm-6 col-md-2">
+					<label class="col-form-label">Hasta</label>
 					<input type="date" class="form-control" @bind="FechaHasta" />
 				</div>
 
-				<div class="col-2">
+				<!--Busqueda-->
+				<div class="col col-sm-6 col-md-3">
+					<label class="col-form-label">B&uacute;squeda</label>
 					<div class="input-group">
 						<input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
 						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
 					</div>
 				</div>
 
-				<div class="col-2">
+				<div class="col-12 col-sm-6 col-md-2 mt-md-0">
+					<label class="form-label d-none d-md-block">&nbsp</label>
 					<button type="button" class="btn btn-outline-secondary w-100" @onclick="LimpiarFiltros">
 						<span class="bi bi-x-circle"></span>
 					</button>
@@ -89,7 +79,7 @@
 								<td>@entradasHuacales.NombreCliente</td>
 								<td>@entradasHuacales.Cantidad</td>
 								<td>@entradasHuacales.Precio</td>
-								<td>@(entradasHuacales.Cantidad * entradasHuacales.Precio)</td>
+								<td>@(entradasHuacales.Cantidad* entradasHuacales.Precio)</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
 										<span class="bi bi-pencil"></span>
@@ -103,8 +93,14 @@
 		</div>
 
 		<div class="card-footer text-center">
-			<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.Cantidad)</label>
-			<label>Total de Importe: @ListaEntradasHuacales.Sum(e => e.Cantidad * e.Precio)</label>
+			<div class="row">
+				<div class="col-6">
+					<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.Cantidad)</label>
+				</div>
+				<div class="col-6">
+					<label>Total de Importe: @ListaEntradasHuacales.Sum(e => e.Cantidad * e.Precio)</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
