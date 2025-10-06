@@ -17,46 +17,70 @@
 			@*Labels*@
 			<div class="row">
 				@*Filtrar Por*@
-				<div class="col-3">
+				<div class="col-2">
 					<label class="col-form-label">Filtrar Por</label>
 				</div>
 
+				@*Fecha Desde*@
+				<div class="col-2">
+					<label class="col-form-label">Desde</label>
+				</div>
+
+				@*Fecha Hasta*@
+				<div class="col-2">
+					<label class="col-form-label">Hasta</label>
+				</div>
+
 				@*Busqueda*@
-				<div class="col-4">
+				<div class="col-3">
 					<label class="col-form-label">B&uacute;squeda</label>
 				</div>
 			</div>
 			@*Inputs y botones*@
 			<div class="row align-items-center">
-				<div class="col-3">
+				<div class="col-2">
 					<InputSelect class="form-select" @bind-Value="Filtro">
 						<option value="" selected disabled>Elija una opci&oacute;n</option>
 						<option value="IdEntrada">IdEntrada</option>
 						<option value="NombreCliente">NombreCliente</option>
 						<option value="Cantidad">Cantidad</option>
 						<option value="Precio">Precio</option>
-						<option value="Fecha">Fecha</option>
 					</InputSelect>
 				</div>
 
-				<div class="col-4">
+				<div class="col-2">
+					<input type="date" class="form-control" @bind="FechaDesde" />
+				</div>
+
+				<div class="col-2">
+					<input type="date" class="form-control" @bind="FechaHasta" />
+				</div>
+
+				<div class="col-3">
 					<div class="input-group">
 						<input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
 						<button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
 					</div>
 				</div>
+
+				<div class="col-2">
+					<button type="button" class="btn btn-outline-secondary" @onclick="LimpiarFiltros">
+						<span class="bi bi-x-circle"></span>
+					</button>
+				</div>
 			</div>
 
-			<div class="table-responsive">
+			<div class="table-responsive mt-3">
 				<table class="table table-hover text-center align-middle">
 					<thead class="table table-striped text-black">
 						<tr>
-							<th>ID ENTRADA</th>
-							<th>NOMBRE CLIENTE</th>
-							<th>CANTIDAD</th>
-							<th>PRECIO</th>
-							<th>FECHA</th>
-							<th>OPCIONES</th>
+							<th>Fecha</th>
+							<th>Id Entrada</th>
+							<th>Nombre Cliente</th>
+							<th>Cantidad</th>
+							<th>Precio Unitario</th>
+							<th>Importe</th>
+							<th>Opciones</th>
 						</tr>
 					</thead>
 
@@ -64,14 +88,15 @@
 						@foreach (var entradasHuacales in ListaEntradasHuacales)
 						{
 							<tr>
+								<td>@entradasHuacales.Fecha.ToString("MM/dd/yyyy")</td>
 								<td>@entradasHuacales.IdEntrada</td>
 								<td>@entradasHuacales.NombreCliente</td>
 								<td>@entradasHuacales.Cantidad</td>
 								<td>@entradasHuacales.Precio</td>
-								<td>@entradasHuacales.Fecha.ToString("dd/MM/yyyy")</td>
+								<td>@(entradasHuacales.Cantidad * entradasHuacales.Precio)</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
-										<span class="bi bi-pencil"></span>	
+										<span class="bi bi-pencil"></span>
 									</a>
 								</td>
 							</tr>
@@ -81,9 +106,15 @@
 			</div>
 		</div>
 
-		<div class="card-footer text-center">
-			<label>Cantidad de Entradas: @ListaEntradasHuacales.Count()</label>
-			<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.Cantidad)</label>
+		<div class="card-footer">
+			<div class="row">
+				<div class="col-6">
+					<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.Cantidad)</label>
+				</div>
+				<div class="col-6 text-end">
+					<label>Total de Importes: @ListaEntradasHuacales.Sum(e => e.Cantidad * e.Precio)</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -91,6 +122,8 @@
 	public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
 	public string Filtro { get; set; }
 	public string ValorFiltro { get; set; }
+	public DateTime? FechaDesde { get; set; }
+	public DateTime? FechaHasta { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -99,6 +132,21 @@
 
 	public async Task Buscar()
 	{
+		if (FechaDesde.HasValue && FechaHasta.HasValue)
+		{
+			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => 
+				e.Fecha.Date >= FechaDesde.Value.Date && 
+				e.Fecha.Date <= FechaHasta.Value.Date);
+		}
+		else if (FechaDesde.HasValue)
+		{
+			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date >= FechaDesde.Value.Date);
+		}
+		else if (FechaHasta.HasValue)
+		{
+			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date <= FechaHasta.Value.Date);
+		}
+
 		if (!string.IsNullOrWhiteSpace(ValorFiltro))
 		{
 			if (Filtro == "IdEntrada" && int.TryParse(ValorFiltro, out var idEntrada))
@@ -108,7 +156,7 @@
 
 			if (Filtro == "NombreCliente")
 			{
-				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.NombreCliente.ToLower().Contains(ValorFiltro));
+				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.NombreCliente.ToLower().Contains(ValorFiltro.ToLower()));
 			}
 
 			if (Filtro == "Cantidad" && int.TryParse(ValorFiltro, out var cantidad))
@@ -120,16 +168,15 @@
 			{
 				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Precio == precio);
 			}
+		}
+	}
 
-			if (Filtro == "Fecha")
-			{
-				DateTime fechaFiltro = DateTime.Parse(ValorFiltro);
-				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Fecha.Date == fechaFiltro);
-			}
-		}
-		else
-		{
-			ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.IdEntrada > 0);
-		}
+	public async Task LimpiarFiltros()
+	{
+		Filtro = string.Empty;
+		ValorFiltro = string.Empty;
+		FechaDesde = null;
+		FechaHasta = null;
+		ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.IdEntrada > 0);
 	}
 }
