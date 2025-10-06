@@ -14,8 +14,14 @@
 
 		<div class="card-body">
 			<div class="mb-3">
+				<label class="form-label">Fecha</label>
+				<InputDate class="form-control" @bind-Value="EntradasHuacales.Fecha"></InputDate>
+				<ValidationMessage For="(() => EntradasHuacales.Fecha)" />
+			</div>
+
+			<div class="mb-3">
 				<label class="form-label">IdEntrada</label>
-				<InputNumber class="form-control" @bind-Value="EntradasHuacales.IdEntrada" readonly></InputNumber>
+				<InputNumber class="form-control bg-light text-secondary" @bind-Value="EntradasHuacales.IdEntrada" readonly></InputNumber>
 				<ValidationMessage For="(() => EntradasHuacales.IdEntrada)"/>
 			</div>
 
@@ -38,9 +44,8 @@
 			</div>
 
 			<div class="mb-3">
-				<label class="form-label">Fecha</label>
-				<InputDate class="form-control" @bind-Value="EntradasHuacales.Fecha"></InputDate>
-				<ValidationMessage For="(() => EntradasHuacales.Fecha)"/>
+				<label class="form-label">Importe</label>
+				<input class="form-control bg-light text-secondary" value="@(EntradasHuacales.Cantidad * EntradasHuacales.Precio)" readonly />
 			</div>
 
 			@if (!string.IsNullOrWhiteSpace(errorMensaje))
