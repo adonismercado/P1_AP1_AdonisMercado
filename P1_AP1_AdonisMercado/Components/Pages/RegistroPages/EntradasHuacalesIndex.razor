@@ -79,6 +79,7 @@
 							<th>Nombre Cliente</th>
 							<th>Cantidad</th>
 							<th>Precio Unitario</th>
+							<th>Importe</th>
 							<th>Opciones</th>
 						</tr>
 					</thead>
@@ -92,6 +93,7 @@
 								<td>@entradasHuacales.NombreCliente</td>
 								<td>@entradasHuacales.Cantidad</td>
 								<td>@entradasHuacales.Precio</td>
+								<td>@(entradasHuacales.Cantidad * entradasHuacales.Precio)</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
 										<span class="bi bi-pencil"></span>
