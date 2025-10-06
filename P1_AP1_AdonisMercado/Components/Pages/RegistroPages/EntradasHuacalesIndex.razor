@@ -74,11 +74,11 @@
 				<table class="table table-hover text-center align-middle">
 					<thead class="table table-striped text-black">
 						<tr>
+							<th>Fecha</th>
 							<th>Id Entrada</th>
 							<th>Nombre Cliente</th>
 							<th>Cantidad</th>
 							<th>Precio Unitario</th>
-							<th>Fecha</th>
 							<th>Opciones</th>
 						</tr>
 					</thead>
@@ -87,11 +87,11 @@
 						@foreach (var entradasHuacales in ListaEntradasHuacales)
 						{
 							<tr>
+								<td>@entradasHuacales.Fecha.ToString("MM/dd/yyyy")</td>
 								<td>@entradasHuacales.IdEntrada</td>
 								<td>@entradasHuacales.NombreCliente</td>
 								<td>@entradasHuacales.Cantidad</td>
 								<td>@entradasHuacales.Precio</td>
-								<td>@entradasHuacales.Fecha.ToString("dd/MM/yyyy")</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
 										<span class="bi bi-pencil"></span>
