@@ -14,14 +14,8 @@
 
 		<div class="card-body">
 			<div class="mb-3">
-				<label class="form-label">Fecha</label>
-				<InputDate class="form-control" @bind-Value="EntradasHuacales.Fecha"></InputDate>
-				<ValidationMessage For="(() => EntradasHuacales.Fecha)" />
-			</div>
-
-			<div class="mb-3">
 				<label class="form-label">IdEntrada</label>
-				<InputNumber class="form-control bg-light text-secondary" @bind-Value="EntradasHuacales.IdEntrada" readonly></InputNumber>
+				<InputNumber class="form-control" @bind-Value="EntradasHuacales.IdEntrada"></InputNumber>
 				<ValidationMessage For="(() => EntradasHuacales.IdEntrada)"/>
 			</div>
 
@@ -44,8 +38,9 @@
 			</div>
 
 			<div class="mb-3">
-				<label class="form-label">Importe</label>
-				<input class="form-control bg-light text-secondary" value="@(EntradasHuacales.Cantidad * EntradasHuacales.Precio)" readonly/>
+				<label class="form-label">Fecha</label>
+				<InputDate class="form-control" @bind-Value="EntradasHuacales.Fecha"></InputDate>
+				<ValidationMessage For="(() => EntradasHuacales.Fecha)"/>
 			</div>
 
 			@if (!string.IsNullOrWhiteSpace(errorMensaje))
@@ -60,35 +55,10 @@
 			</a>
 
 			<button type="submit" class="btn btn-primary bi bi-save"> Guardar</button>
-			<buttton type="button" class="btn btn-danger bi bi-trash" @onclick="MostrarModalEliminar"> Eliminar</buttton>
+			<buttton type="button" class="btn btn-danger bi bi-trash" @onclick="Eliminar"> Eliminar</buttton>
 		</div>
 	</div>
 </EditForm>
-
-@if (mostrarModal)
-{
-	<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header bg-danger text-white">
-					<h5 class="modal-title">Confirmar eliminación</h5>
-					<button type="button" class="btn-close" @onclick="CerrarModal"></button>
-				</div>
-
-				<div class="modal-body">
-					<p>¿Está seguro que desea eliminar la entrada del cliente <strong>@EntradasHuacales.NombreCliente</strong>?</p>
-				</div>
-
-				<div class="modal-footer">
-					<button class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
-					<button class="btn btn-danger" @onclick="ConfirmarEliminar">
-						<span class="bi bi-trash"></span> Eliminar
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-}
 
 @code {
 	[Parameter]
@@ -96,7 +66,6 @@
 
 	public EntradasHuacales EntradasHuacales { get; set; } = new EntradasHuacales();
 	public string errorMensaje { get; set; } = string.Empty;
-	private bool mostrarModal = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -120,24 +89,13 @@
 		}
 	}
 
-	public void MostrarModalEliminar()
-	{
-		mostrarModal = true;
-	}
-
-	public void CerrarModal()
-	{
-		mostrarModal = false;
-	}
-
-	public async Task ConfirmarEliminar()
+	public async Task Eliminar()
 	{
 		var eliminado = await entradaHuacalesService.Eliminar(IdEntrada);
 
 		if (eliminado)
 		{
-			mostrarModal = false;
-			navigationManager.NavigateTo("/EntradasHuacales/Index");
+			navigationManager.NavigateTo("EntradasHuacales/Index");
 		}
 		else
 		{
