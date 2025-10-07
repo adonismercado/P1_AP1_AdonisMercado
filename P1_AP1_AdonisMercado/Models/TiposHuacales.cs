@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace P1_AP1_AdonisMercado.Models;
 
 public class TiposHuacales
@@ -11,4 +12,7 @@ public class TiposHuacales
 
     public int Existencia { get; set; }
 
+    [ForeignKey("DetalleId")]
+    [InverseProperty("TiposHuacales")]
+    public virtual TiposHuacales TipoHuacal { get; set; }
 }
