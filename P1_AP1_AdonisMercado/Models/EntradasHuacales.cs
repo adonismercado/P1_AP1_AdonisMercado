@@ -19,8 +19,8 @@ public class EntradasHuacales
     [Range(1, double.MaxValue, ErrorMessage = "Error: El precio debe ser mayor a 1.")]
     public decimal Precio { get; set; }
 
-    [InverseProperty("IdDetalle")]
-    public virtual ICollection<EntradasHuacalesDetalle> EntradasHuacalesDetalles { get; set; } = new LinkedList<EntradasHuacalesDetalle>();
+    [InverseProperty("EntradaHuacal")]
+    public virtual ICollection<EntradasHuacalesDetalle> EntradasHuacalesDetalles { get; set; } = new List<EntradasHuacalesDetalle>();
 }
 
 
