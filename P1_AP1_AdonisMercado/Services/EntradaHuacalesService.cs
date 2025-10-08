@@ -12,6 +12,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
+            .Include(e => e.EntradasHuacalesDetalles)
             .Where(criterio)
             .AsNoTracking()
             .ToListAsync();
@@ -22,6 +23,26 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
         contexto.EntradasHuacales.Add(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
+    }
+
+    private async Task AfectarEntradasHuacales(EntradasHuacalesDetalle[] detalle, TipoOperacion tipoOperacion)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+
+        foreach (var item in detalle)
+        {
+            var tipoHuacal = await contexto.TiposHuacales
+                .SingleAsync(t => t.TipoId == item.TipoId);
+
+            if (tipoOperacion == TipoOperacion.Suma)
+            {
+                tipoHuacal.Existencia += item.Cantidad;
+            }
+            else if (tipoOperacion == TipoOperacion.Resta)
+            {
+                tipoHuacal.Existencia -= item.Cantidad;
+            }
+        }
     }
 
     public async Task<bool> Modificar(EntradasHuacales entradasHuacales)
@@ -50,10 +71,11 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         }
     }
 
-    public async Task<EntradasHuacales> Buscar(int idEntrada)
+    public async Task<EntradasHuacales?> Buscar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
+            .Include(e => e.EntradasHuacalesDetalles)
             .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
     }
 
@@ -65,5 +87,12 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
             .Where(e => e.IdEntrada == idEntrada)
             .ExecuteDeleteAsync() > 0;
     }
+
+    public enum TipoOperacion
+    { 
+        Suma = 1,
+        Resta = 2
+    }
+
 }
 
