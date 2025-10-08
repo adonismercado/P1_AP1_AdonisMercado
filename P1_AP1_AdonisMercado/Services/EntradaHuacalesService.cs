@@ -49,6 +49,37 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     public async Task<bool> Modificar(EntradasHuacales entradasHuacales)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
+
+        var entradaAnterior = await contexto.EntradasHuacales
+            .Include(e => e.EntradasHuacalesDetalles)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.IdEntrada == entradasHuacales.IdEntrada);
+        
+        // Restar entrada original
+        foreach (var item in entradaAnterior.EntradasHuacalesDetalles)
+        {
+            var tipoHuacal = await contexto.TiposHuacales
+                .FirstOrDefaultAsync(t => t.TipoId == item.TipoId);
+
+            if (tipoHuacal != null)
+            {
+                tipoHuacal.Existencia -= item.Cantidad;
+            }
+        }
+
+        // Aplicar nueva entrada
+        foreach (var item in entradasHuacales.EntradasHuacalesDetalles)
+        {
+            var tipoHuacal = await contexto.TiposHuacales
+                .FirstOrDefaultAsync(t => t.TipoId == item.TipoId);
+
+            if (tipoHuacal != null)
+            {
+                tipoHuacal.Existencia += item.Cantidad;
+            }
+        }
+        
+        // Actualizar entrada principal
         contexto.EntradasHuacales.Update(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
     }
