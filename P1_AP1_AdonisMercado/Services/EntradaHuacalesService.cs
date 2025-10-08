@@ -100,10 +100,23 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     public async Task<bool> Eliminar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.EntradasHuacales
-            .AsNoTracking()
-            .Where(e => e.IdEntrada == idEntrada)
-            .ExecuteDeleteAsync() > 0;
+
+        var entrada = await contexto.EntradasHuacales
+            .Include(e => e.EntradasHuacalesDetalles)
+            .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
+
+        if (entrada == null)
+        {
+            return false;
+        }
+
+        await AfectarEntradasHuacales(entrada.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Resta);
+
+        contexto.EntradasHuacalesDetalles.RemoveRange(entrada.EntradasHuacalesDetalles);
+        contexto.EntradasHuacales.Remove(entrada);
+
+        var cantidad = await contexto.SaveChangesAsync();
+        return cantidad > 0;
     }
 
     public enum TipoOperacion
