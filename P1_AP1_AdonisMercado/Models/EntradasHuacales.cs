@@ -2,21 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace P1_AP1_AdonisMercado.Models;
 
-public class EntradasHuacalesDetalle
-{
-    [Key]
-    public int DetalleId { get; set; }
-    public int IdEntrada { get; set; }
-    public int TipoId { get; set; }
-    public int Cantidad { get; set; }
-
-    public int Precio { get; set; }
-
-    [ForeignKey("IdEntrada")]
-    [InverseProperty("EntradasHuacalesDetalle")]
-    public virtual EntradasHuacales EntradaHuacal { get; set; }
-}
-
 public class EntradasHuacales
 {
     [Key]
