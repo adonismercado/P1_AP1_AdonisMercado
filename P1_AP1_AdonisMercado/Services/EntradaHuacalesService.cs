@@ -54,32 +54,18 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
             .Include(e => e.EntradasHuacalesDetalles)
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.IdEntrada == entradasHuacales.IdEntrada);
-        
-        // Restar entrada original
-        foreach (var item in entradaAnterior.EntradasHuacalesDetalles)
-        {
-            var tipoHuacal = await contexto.TiposHuacales
-                .FirstOrDefaultAsync(t => t.TipoId == item.TipoId);
 
-            if (tipoHuacal != null)
-            {
-                tipoHuacal.Existencia -= item.Cantidad;
-            }
+        if (entradaAnterior == null)
+        {
+            return false;
         }
 
-        // Aplicar nueva entrada
-        foreach (var item in entradasHuacales.EntradasHuacalesDetalles)
-        {
-            var tipoHuacal = await contexto.TiposHuacales
-                .FirstOrDefaultAsync(t => t.TipoId == item.TipoId);
+        // Restar cantidad original
+        await AfectarEntradasHuacales(entradaAnterior.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Resta);
 
-            if (tipoHuacal != null)
-            {
-                tipoHuacal.Existencia += item.Cantidad;
-            }
-        }
-        
-        // Actualizar entrada principal
+        // Sumar nueva cantidad
+        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Suma);
+
         contexto.EntradasHuacales.Update(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
     }
@@ -121,7 +107,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     }
 
     public enum TipoOperacion
-    { 
+    {
         Suma = 1,
         Resta = 2
     }
