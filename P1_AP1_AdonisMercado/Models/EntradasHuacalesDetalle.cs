@@ -14,7 +14,7 @@ public class EntradasHuacalesDetalle
     public decimal Precio { get; set; }
 
     [ForeignKey("IdEntrada")]
-    [InverseProperty("EntradasHuacalesDetalle")]
+    [InverseProperty("DetalleHuacales")]
     public virtual EntradasHuacales EntradaHuacal { get; set; }
 
     [ForeignKey("TipoId")]

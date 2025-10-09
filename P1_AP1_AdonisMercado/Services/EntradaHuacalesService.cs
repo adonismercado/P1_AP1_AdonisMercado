@@ -22,14 +22,12 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         contexto.EntradasHuacales.Add(entradasHuacales);
-        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma);
+        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma, contexto);
         return await contexto.SaveChangesAsync() > 0;
     }
 
-    private async Task AfectarEntradasHuacales(EntradasHuacalesDetalle[] detalle, TipoOperacion tipoOperacion)
+    private async Task AfectarEntradasHuacales(EntradasHuacalesDetalle[] detalle, TipoOperacion tipoOperacion, Contexto contexto)
     {
-        await using var contexto = await DbFactory.CreateDbContextAsync();
-
         foreach (var item in detalle)
         {
             var tipoHuacal = await contexto.TiposHuacales
@@ -61,10 +59,10 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         }
 
         // Restar cantidad original
-        await AfectarEntradasHuacales(entradaAnterior.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta);
+        await AfectarEntradasHuacales(entradaAnterior.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta, contexto);
 
         // Sumar nueva cantidad
-        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma);
+        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma, contexto);
 
         contexto.EntradasHuacales.Update(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
@@ -110,7 +108,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
             return false;
         }
 
-        await AfectarEntradasHuacales(entrada.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta);
+        await AfectarEntradasHuacales(entrada.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta, contexto);
 
         contexto.EntradasHuacalesDetalles.RemoveRange(entrada.EntradasHuacalesDetalle);
         contexto.EntradasHuacales.Remove(entrada);

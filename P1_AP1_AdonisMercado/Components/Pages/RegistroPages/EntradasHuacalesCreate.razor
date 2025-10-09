@@ -56,16 +56,18 @@
 						</thead>
 
 						<tbody class="text-center">
-							@foreach (var detalle in EntradasHuacales.EntradasHuacalesDetalle)
+							@foreach (var detalle in EntradasHuacales.DetalleHuacales)
 							{
 								<tr>
 									<td>@ListaTiposHuacales.FirstOrDefault(t => t.TipoId == detalle.TipoId)?.Descripcion</td>
 									<td>@detalle.Cantidad</td>
 									<td>@detalle.Precio</td>
-									<td>@(detalle.Cantidad * detalle.Precio)</td>
+									<td>@(detalle.Cantidad* detalle.Precio)</td>
 									<td>
 										<button type="button" class="btn btn-outline-dark bi bi-trash"
-										@onclick="() => RemoverDetalle(detalle)">Remover</button>
+												@onclick="() => RemoverDetalle(detalle)">
+											Remover
+										</button>
 									</td>
 								</tr>
 							}
@@ -75,7 +77,7 @@
 						@*Total del Importe*@
 						<div class="mb-3">
 							<label class="form-label"><strong>Importe Total:</strong></label>
-							<input class="form-control bg-light text-secondary" value="@EntradasHuacales.EntradasHuacalesDetalle.Sum(d => d.Cantidad * d.Precio)" readonly />
+							<input class="form-control bg-light text-secondary" value="@EntradasHuacales.DetalleHuacales.Sum(d => d.Cantidad * d.Precio)" readonly />
 						</div>
 					</table>
 				</div>
@@ -112,12 +114,14 @@
 
 	private async Task HandleTipoSeleccionado((TiposHuacales tipo, int cantidad, decimal precio) selection)
 	{
-		EntradasHuacales.EntradasHuacalesDetalle.Add(new EntradasHuacalesDetalle
+		var detalle = new EntradasHuacalesDetalle
 		{
 			TipoId = selection.tipo.TipoId,
 			Cantidad = selection.cantidad,
-			Precio = selection.precio
-		});
+			Precio = selection.precio,
+		};
+
+		EntradasHuacales.DetalleHuacales.Add(detalle);
 
 		DetalleSeleccionado = new EntradasHuacalesDetalle();
 		await Task.CompletedTask;
@@ -140,7 +144,7 @@
 
 	private void RemoverDetalle(EntradasHuacalesDetalle detalle)
 	{
-		EntradasHuacales.EntradasHuacalesDetalle.Remove(detalle);
+		EntradasHuacales.DetalleHuacales.Remove(detalle);
 		DetalleSeleccionado = detalle;
 	}
 }
