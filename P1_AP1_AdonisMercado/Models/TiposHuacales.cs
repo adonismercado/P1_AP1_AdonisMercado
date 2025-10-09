@@ -12,6 +12,6 @@ public class TiposHuacales
 
     public int Existencia { get; set; }
 
-    [InverseProperty("TiposHuacales")]
-    public virtual TiposHuacales TipoHuacal { get; set; }
+    [InverseProperty("TipoHuacal")]
+    public virtual ICollection<EntradasHuacalesDetalle> EntradasHuacalesDetalle { get; set; } = new List<EntradasHuacalesDetalle>();
 }
