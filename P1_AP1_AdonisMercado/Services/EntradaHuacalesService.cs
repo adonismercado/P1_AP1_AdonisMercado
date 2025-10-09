@@ -12,7 +12,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
-            .Include(e => e.EntradasHuacalesDetalles)
+            .Include(e => e.EntradasHuacalesDetalle)
             .Where(criterio)
             .AsNoTracking()
             .ToListAsync();
@@ -22,7 +22,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         contexto.EntradasHuacales.Add(entradasHuacales);
-        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Suma);
+        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma);
         return await contexto.SaveChangesAsync() > 0;
     }
 
@@ -51,7 +51,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
 
         var entradaAnterior = await contexto.EntradasHuacales
-            .Include(e => e.EntradasHuacalesDetalles)
+            .Include(e => e.EntradasHuacalesDetalle)
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.IdEntrada == entradasHuacales.IdEntrada);
 
@@ -61,10 +61,10 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         }
 
         // Restar cantidad original
-        await AfectarEntradasHuacales(entradaAnterior.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Resta);
+        await AfectarEntradasHuacales(entradaAnterior.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta);
 
         // Sumar nueva cantidad
-        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Suma);
+        await AfectarEntradasHuacales(entradasHuacales.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Suma);
 
         contexto.EntradasHuacales.Update(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
@@ -93,7 +93,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
-            .Include(e => e.EntradasHuacalesDetalles)
+            .Include(e => e.EntradasHuacalesDetalle)
             .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
     }
 
@@ -102,7 +102,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
 
         var entrada = await contexto.EntradasHuacales
-            .Include(e => e.EntradasHuacalesDetalles)
+            .Include(e => e.EntradasHuacalesDetalle)
             .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
 
         if (entrada == null)
@@ -110,9 +110,9 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
             return false;
         }
 
-        await AfectarEntradasHuacales(entrada.EntradasHuacalesDetalles.ToArray(), TipoOperacion.Resta);
+        await AfectarEntradasHuacales(entrada.EntradasHuacalesDetalle.ToArray(), TipoOperacion.Resta);
 
-        contexto.EntradasHuacalesDetalles.RemoveRange(entrada.EntradasHuacalesDetalles);
+        contexto.EntradasHuacalesDetalles.RemoveRange(entrada.EntradasHuacalesDetalle);
         contexto.EntradasHuacales.Remove(entrada);
 
         var cantidad = await contexto.SaveChangesAsync();
