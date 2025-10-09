@@ -20,7 +20,7 @@ public class EntradasHuacales
     public decimal Precio { get; set; }
 
     [InverseProperty("EntradaHuacal")]
-    public virtual ICollection<EntradasHuacalesDetalle> EntradasHuacalesDetalles { get; set; } = new List<EntradasHuacalesDetalle>();
+    public virtual ICollection<EntradasHuacalesDetalle> EntradasHuacalesDetalle { get; set; } = new List<EntradasHuacalesDetalle>();
 }
 
 
