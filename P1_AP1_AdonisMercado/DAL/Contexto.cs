@@ -18,19 +18,37 @@ public class Contexto : DbContext
                 new()
                 {
                     TipoId = 1,
-                    Descripcion = "Huacal Verde",
+                    Descripcion = "Huacal Verde Tamaño Pequeña",
                     Existencia = 0,
                 },
                 new()
                 {
                     TipoId = 2,
-                    Descripcion = "Huacal Rojo",
+                    Descripcion = "Huacal Verde Tamaño Mediana",
                     Existencia = 0,
                 },
                 new()
                 {
                     TipoId = 3,
-                    Descripcion = "Huacal Negro",
+                    Descripcion = "Huacal Verde Tamaño Jumbo",
+                    Existencia = 0,
+                },
+                new()
+                {
+                    TipoId = 4,
+                    Descripcion = "Huacal Rojo Tamaño Pequeña",
+                    Existencia = 0,
+                },
+                new()
+                {
+                    TipoId = 5,
+                    Descripcion = "Huacalo Rojo Tamaño Mediana",
+                    Existencia = 0,
+                },
+                new()
+                {
+                    TipoId = 6,
+                    Descripcion = "Huacal Rojo Tamaño Jumbo",
                     Existencia = 0,
                 }
             }
