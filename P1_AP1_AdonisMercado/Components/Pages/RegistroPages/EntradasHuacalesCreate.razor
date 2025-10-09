@@ -2,6 +2,7 @@
 @inject IDbContextFactory<Contexto> DbFactory
 @inject EntradaHuacalesService entradasHuacalesService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 @rendermode InteractiveServer
 
 <PageTitle>Crear Entrada de Huacal</PageTitle>
@@ -69,7 +70,29 @@
 
 @code {
 	public EntradasHuacales EntradasHuacales { get; set; } = new EntradasHuacales();
+	public EntradasHuacalesDetalle DetalleSeleccionado { get; set; } = new();
+	public List<TiposHuacales> ListaTiposHuacales { get; set; } = new();
 	public string errorMensaje { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await using var contexto = await DbFactory.CreateDbContextAsync();
+		ListaTiposHuacales = await contexto.TiposHuacales.ToListAsync();
+		EntradasHuacales.Fecha = DateTime.Now;
+	}
+
+	private async Task HandleTipoSeleccionado((TiposHuacales tipo, int cantidad, decimal precio) selection)
+	{
+		EntradasHuacales.EntradasHuacalesDetalle.Add(new EntradasHuacalesDetalle
+		{
+			TipoId = selection.tipo.TipoId,
+			Cantidad = selection.cantidad,
+			Precio = selection.precio
+		});
+
+		DetalleSeleccionado = new EntradasHuacalesDetalle();
+		await Task.CompletedTask;
+	}
 
 	public async Task Guardar()
 	{
@@ -77,11 +100,18 @@
 
 		if (creado)
 		{
+			toastService.ShowSuccess("Entrada guardada correctamente!");
 			navigationManager.NavigateTo("/EntradasHuacales/Index");
 		}
 		else
 		{
 			errorMensaje = "No se pudo registrar la entrada correctamente.";
 		}
+	}
+
+	private void RemoverDetalle(EntradasHuacalesDetalle detalle)
+	{
+		EntradasHuacales.EntradasHuacalesDetalle.Remove(detalle);
+		DetalleSeleccionado = detalle;
 	}
 }
