@@ -127,5 +127,10 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         Resta = 2
     }
 
+    public async Task<List<TiposHuacales>> ListarTiposHuacales()
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.TiposHuacales.ToListAsync();
+    }
 }
 

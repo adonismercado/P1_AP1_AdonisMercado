@@ -107,8 +107,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await using var contexto = await DbFactory.CreateDbContextAsync();
-		ListaTiposHuacales = await contexto.TiposHuacales.ToListAsync();
+		ListaTiposHuacales = await entradasHuacalesService.ListarTiposHuacales();
 		EntradasHuacales.Fecha = DateTime.Now;
 	}
 
