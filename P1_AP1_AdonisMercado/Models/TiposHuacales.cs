@@ -12,7 +12,6 @@ public class TiposHuacales
 
     public int Existencia { get; set; }
 
-    [ForeignKey("DetalleId")]
     [InverseProperty("TiposHuacales")]
     public virtual TiposHuacales TipoHuacal { get; set; }
 }
