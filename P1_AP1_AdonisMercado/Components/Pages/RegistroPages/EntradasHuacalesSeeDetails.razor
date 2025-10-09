@@ -1,5 +1,74 @@
-﻿<h3>EntradasHuacalesSeeDetails</h3>
+﻿@page "/EntradasHuacales/Detalles/{IdEntrada:int}"
+@inject EntradaHuacalesService entradasHuacalesService
+@inject NavigationManager navigationManager
+
+<PageTitle>Detalles de Entrada</PageTitle>
+
+<div class="container mt-3">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title">Detalles de Entrada #@IdEntrada</h5>
+            <a href="/EntradasHuacales/Index" class="btn btn-secondary">
+                <span class="bi bi-arrow-left"></span> Volver
+            </a>
+        </div>
+
+        <div class="card-body">
+            @if (EntradaDetalles == null)
+            {
+                <p>Cargando detalles...</p>
+            }
+            else if (!EntradaDetalles.Any())
+            {
+                <p>No hay detalles para esta entrada.</p>
+            }
+            else
+            {
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tipo Huacal</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detalle in EntradaDetalles)
+                        {
+                            <tr>
+                                <td>@detalle.TipoHuacal?.Descripcion</td>
+                                <td>@detalle.Cantidad</td>
+                                <td>@detalle.Precio</td>
+                                <td>@(detalle.Cantidad* detalle.Precio)</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end">Total:</td>
+                            <td>@EntradaDetalles.Sum(d => d.Cantidad * d.Precio)</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public int IdEntrada { get; set; }
 
+    private List<EntradasHuacalesDetalle> EntradaDetalles { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var entrada = await entradasHuacalesService.Buscar(IdEntrada);
+
+        if (entrada != null)
+            EntradaDetalles = entrada.DetalleHuacales.ToList();
+        else
+            EntradaDetalles = new List<EntradasHuacalesDetalle>();
+    }
 }

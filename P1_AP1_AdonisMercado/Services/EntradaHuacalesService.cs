@@ -95,6 +95,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
             .Include(e => e.DetalleHuacales)
+                .ThenInclude(d => d.TipoHuacal)
             .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
     }
 
