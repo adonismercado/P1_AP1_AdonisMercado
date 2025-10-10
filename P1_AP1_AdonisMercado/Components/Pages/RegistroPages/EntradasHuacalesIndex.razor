@@ -1,6 +1,7 @@
 ﻿@page "/EntradasHuacales/Index"
 
 @inject EntradaHuacalesService entradaHuacalesService
+@inject IDbContextFactory<Contexto> DbFactory
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -64,8 +65,7 @@
 							<th>Id Entrada</th>
 							<th>Nombre Cliente</th>
 							<th>Cantidad</th>
-							<th>Precio</th>
-							<th>Importe</th>
+							<th>Importe Total</th>
 							<th>Opciones</th>
 						</tr>
 					</thead>
@@ -77,9 +77,8 @@
 								<td>@entradasHuacales.Fecha.ToString("MM/dd/yyyy")</td>
 								<td>@entradasHuacales.IdEntrada</td>
 								<td>@entradasHuacales.NombreCliente</td>
-								<td>@entradasHuacales.Cantidad</td>
-								<td>@entradasHuacales.Precio</td>
-								<td>@(entradasHuacales.Cantidad* entradasHuacales.Precio)</td>
+								<td>@entradasHuacales.DetalleHuacales.Sum(e => e.Cantidad)</td>
+								<td>@entradasHuacales.DetalleHuacales.Sum(e => e.Cantidad * e.Precio)</td>
 								<td>
 									<a href="/EntradasHuacales/Edit/@entradasHuacales.IdEntrada" class="btn btn-outline-dark">
 										<span class="bi bi-pencil"></span>
