@@ -12,6 +12,7 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
+            .Include(e => e.DetalleHuacales)
             .Where(criterio)
             .AsNoTracking()
             .ToListAsync();
@@ -21,12 +22,51 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         contexto.EntradasHuacales.Add(entradasHuacales);
+        await AfectarEntradasHuacales(entradasHuacales.DetalleHuacales.ToArray(), TipoOperacion.Suma);
         return await contexto.SaveChangesAsync() > 0;
+    }
+
+    private async Task AfectarEntradasHuacales(EntradasHuacalesDetalle[] detalle, TipoOperacion tipoOperacion)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        foreach (var item in detalle)
+        {
+            var tipoHuacal = await contexto.TiposHuacales
+                .SingleAsync(t => t.TipoId == item.TipoId);
+
+            if (tipoOperacion == TipoOperacion.Suma)
+            {
+                tipoHuacal.Existencia += item.Cantidad;
+            }
+            else if (tipoOperacion == TipoOperacion.Resta)
+            {
+                tipoHuacal.Existencia -= item.Cantidad;
+            }
+
+            await contexto.SaveChangesAsync();
+        }
     }
 
     public async Task<bool> Modificar(EntradasHuacales entradasHuacales)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
+
+        var entradaAnterior = await contexto.EntradasHuacales
+            .Include(e => e.DetalleHuacales)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.IdEntrada == entradasHuacales.IdEntrada);
+
+        if (entradaAnterior == null)
+        {
+            return false;
+        }
+
+        // Restar cantidad original
+        await AfectarEntradasHuacales(entradaAnterior.DetalleHuacales.ToArray(), TipoOperacion.Resta);
+
+        // Sumar nueva cantidad
+        await AfectarEntradasHuacales(entradasHuacales.DetalleHuacales.ToArray(), TipoOperacion.Suma);
+
         contexto.EntradasHuacales.Update(entradasHuacales);
         return await contexto.SaveChangesAsync() > 0;
     }
@@ -50,20 +90,49 @@ public class EntradaHuacalesService(IDbContextFactory<Contexto> DbFactory)
         }
     }
 
-    public async Task<EntradasHuacales> Buscar(int idEntrada)
+    public async Task<EntradasHuacales?> Buscar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.EntradasHuacales
+            .Include(e => e.DetalleHuacales)
+                .ThenInclude(d => d.TipoHuacal)
             .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
     }
 
     public async Task<bool> Eliminar(int idEntrada)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        return await contexto.EntradasHuacales
+
+        var entrada = await contexto.EntradasHuacales
+            .Include(e => e.DetalleHuacales)
+            .FirstOrDefaultAsync(e => e.IdEntrada == idEntrada);
+
+        if (entrada == null)
+        {
+            return false;
+        }
+
+        await AfectarEntradasHuacales(entrada.DetalleHuacales.ToArray(), TipoOperacion.Resta);
+
+        contexto.EntradasHuacalesDetalles.RemoveRange(entrada.DetalleHuacales);
+        contexto.EntradasHuacales.Remove(entrada);
+
+        var cantidad = await contexto.SaveChangesAsync();
+        return cantidad > 0;
+    }
+
+    public enum TipoOperacion
+    {
+        Suma = 1,
+        Resta = 2
+    }
+
+    public async Task<List<TiposHuacales>> ListarTiposHuacales()
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.TiposHuacales
             .AsNoTracking()
-            .Where(e => e.IdEntrada == idEntrada)
-            .ExecuteDeleteAsync() > 0;
+            .ToListAsync();
     }
 }
 

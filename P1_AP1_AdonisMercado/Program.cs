@@ -1,6 +1,7 @@
 using P1_AP1_AdonisMercado.Components;
 using P1_AP1_AdonisMercado.DAL;
 using Microsoft.EntityFrameworkCore;
+using BlazorBootstrap;
 using P1_AP1_AdonisMercado.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,9 @@ var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlite(ConStr));
 
 builder.Services.AddScoped<EntradaHuacalesService>();
+builder.Services.AddBlazorBootstrap();
+builder.Services.AddScoped<ToastService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

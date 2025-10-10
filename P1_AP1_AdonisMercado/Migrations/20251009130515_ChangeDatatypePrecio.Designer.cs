@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using P1_AP1_AdonisMercado.DAL;
 
@@ -10,9 +11,11 @@ using P1_AP1_AdonisMercado.DAL;
 namespace P1_AP1_AdonisMercado.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20251009130515_ChangeDatatypePrecio")]
+    partial class ChangeDatatypePrecio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -127,7 +130,7 @@ namespace P1_AP1_AdonisMercado.Migrations
             modelBuilder.Entity("P1_AP1_AdonisMercado.Models.EntradasHuacalesDetalle", b =>
                 {
                     b.HasOne("P1_AP1_AdonisMercado.Models.EntradasHuacales", "EntradaHuacal")
-                        .WithMany("DetalleHuacales")
+                        .WithMany("EntradasHuacalesDetalle")
                         .HasForeignKey("IdEntrada")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -145,7 +148,7 @@ namespace P1_AP1_AdonisMercado.Migrations
 
             modelBuilder.Entity("P1_AP1_AdonisMercado.Models.EntradasHuacales", b =>
                 {
-                    b.Navigation("DetalleHuacales");
+                    b.Navigation("EntradasHuacalesDetalle");
                 });
 
             modelBuilder.Entity("P1_AP1_AdonisMercado.Models.TiposHuacales", b =>

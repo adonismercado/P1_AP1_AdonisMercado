@@ -1,10 +1,12 @@
 ﻿@page "/EntradasHuacales/Create"
+@inject IDbContextFactory<Contexto> DbFactory
 @inject EntradaHuacalesService entradasHuacalesService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 @rendermode InteractiveServer
 
 <PageTitle>Crear Entrada de Huacal</PageTitle>
-<EditForm Model="EntradasHuacales" OnValidSubmit="Guardar" FormName="CrearEntradaHuacal">
+<EditForm Model="EntradasHuacales" OnSubmit="Guardar" FormName="CrearEntradaHuacal">
 	<DataAnnotationsValidator />
 
 	<div class="container">
@@ -32,21 +34,52 @@
 					<ValidationMessage For="(() => EntradasHuacales.NombreCliente)" />
 				</div>
 
-				<div class="mb-3">
-					<label class="form-label">Cantidad</label>
-					<InputNumber class="form-control" @bind-Value="EntradasHuacales.Cantidad"></InputNumber>
-					<ValidationMessage For="(() => EntradasHuacales.Cantidad)" />
-				</div>
+				@*Detalles de Huacales*@
+				<div class="border border-success p-3 mt-3">
+					<h5>Detalles de Huacales</h5>
 
-				<div class="mb-3">
-					<label class="form-label">Precio</label>
-					<InputNumber class="form-control" @bind-Value="EntradasHuacales.Precio"></InputNumber>
-					<ValidationMessage For="(() => EntradasHuacales.Precio)" />
-				</div>
+					<TipoHuacalPicker TiposHuacales="ListaTiposHuacales"
+									  TipoId="DetalleSeleccionado.TipoId"
+									  Cantidad="DetalleSeleccionado.Cantidad"
+									  Precio="DetalleSeleccionado.Precio"
+									  OnTipoSeleccionado="HandleTipoSeleccionado" />
+					<hr />
+					<table class="table table-light table-bordered table-hover">
+						<thead>
+							<tr class="text-center">
+								<th>Tipo Huacal</th>
+								<th>Cantidad</th>
+								<th>Precio</th>
+								<th>Importe</th>
+								<th>Remover</th>
+							</tr>
+						</thead>
 
-				<div class="mb-3">
-					<label class="form-label">Importe</label>
-					<input class="form-control bg-light text-secondary" value="@(EntradasHuacales.Cantidad* EntradasHuacales.Precio)" readonly />
+						<tbody class="text-center">
+							@foreach (var detalle in EntradasHuacales.DetalleHuacales)
+							{
+								<tr>
+									<td>@ListaTiposHuacales.FirstOrDefault(t => t.TipoId == detalle.TipoId)?.Descripcion</td>
+									<td>@detalle.Cantidad</td>
+									<td>@detalle.Precio</td>
+									<td>@(detalle.Cantidad* detalle.Precio)</td>
+									<td>
+										<button type="button" class="btn btn-outline-dark bi bi-trash"
+												@onclick="() => RemoverDetalle(detalle)">
+											Remover
+										</button>
+									</td>
+								</tr>
+							}
+						</tbody>
+						<hr />
+
+						@*Total del Importe*@
+						<div class="mb-3">
+							<label class="form-label"><strong>Importe Total:</strong></label>
+							<input class="form-control bg-light text-secondary" value="@EntradasHuacales.DetalleHuacales.Sum(d => d.Cantidad * d.Precio)" readonly />
+						</div>
+					</table>
 				</div>
 
 				@if (!string.IsNullOrWhiteSpace(errorMensaje))
@@ -68,19 +101,53 @@
 
 @code {
 	public EntradasHuacales EntradasHuacales { get; set; } = new EntradasHuacales();
+	public EntradasHuacalesDetalle DetalleSeleccionado { get; set; } = new();
+	public List<TiposHuacales> ListaTiposHuacales { get; set; } = new();
 	public string errorMensaje { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		ListaTiposHuacales = await entradasHuacalesService.ListarTiposHuacales();
+		EntradasHuacales.Fecha = DateTime.Now;
+	}
+
+	private async Task HandleTipoSeleccionado((TiposHuacales tipo, int cantidad, decimal precio) selection)
+	{
+		var detalle = new EntradasHuacalesDetalle
+		{
+			TipoId = selection.tipo.TipoId,
+			Cantidad = selection.cantidad,
+			Precio = selection.precio,
+		};
+
+		EntradasHuacales.DetalleHuacales.Add(detalle);
+
+		DetalleSeleccionado = new EntradasHuacalesDetalle();
+		await Task.CompletedTask;
+	}
 
 	public async Task Guardar()
 	{
+		if (EntradasHuacales.NombreCliente == null)
+		{
+			errorMensaje = "El nombre no puede ser vacio";
+		}
 		var creado = await entradasHuacalesService.Guardar(EntradasHuacales);
 
 		if (creado)
 		{
+			toastService.ShowSuccess("Entrada guardada correctamente!");
 			navigationManager.NavigateTo("/EntradasHuacales/Index");
 		}
 		else
 		{
 			errorMensaje = "No se pudo registrar la entrada correctamente.";
 		}
+	}
+
+	private void RemoverDetalle(EntradasHuacalesDetalle detalle)
+	{
+		EntradasHuacales.DetalleHuacales.Remove(detalle);
+		DetalleSeleccionado = detalle;
 	}
 }
