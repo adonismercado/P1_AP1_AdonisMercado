@@ -94,10 +94,10 @@
 		<div class="card-footer text-center">
 			<div class="row">
 				<div class="col-6">
-					<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.Cantidad)</label>
+					<label>Cantidad de Huacales ingresados: @ListaEntradasHuacales.Sum(e => e.DetalleHuacales.Sum(d => d.Cantidad))</label>
 				</div>
 				<div class="col-6">
-					<label>Total de Importe: @ListaEntradasHuacales.Sum(e => e.Cantidad * e.Precio)</label>
+					<label>Total de Importe: @ListaEntradasHuacales.Sum(e => e.DetalleHuacales.Sum(d => d.Cantidad * d.Precio))</label>
 				</div>
 			</div>
 		</div>
