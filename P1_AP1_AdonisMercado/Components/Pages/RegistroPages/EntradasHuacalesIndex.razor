@@ -24,7 +24,7 @@
 						<option value="IdEntrada">IdEntrada</option>
 						<option value="NombreCliente">NombreCliente</option>
 						<option value="Cantidad">Cantidad</option>
-						<option value="Precio">Precio</option>
+						<option value="Importe">Importe</option>
 					</InputSelect>
 				</div>
 
@@ -49,9 +49,9 @@
 					</div>
 				</div>
 
-				<div class="col-12 col-sm-6 col-md-2 mt-md-0">
-					<label class="form-label d-none d-md-block">&nbsp</label>
-					<button type="button" class="btn btn-outline-secondary w-100" @onclick="LimpiarFiltros">
+				<div class="col-12 col-sm-6 col-md-2">
+					<label class="form-label d-block invisible">&nbsp;</label>
+					<button type="button" class="btn btn-outline-secondary w-100 mt-1" @onclick="LimpiarFiltros">
 						<span class="bi bi-x-circle"></span>
 					</button>
 				</div>
@@ -103,6 +103,7 @@
 		</div>
 	</div>
 </div>
+
 @code {
 	public List<EntradasHuacales> ListaEntradasHuacales { get; set; } = new List<EntradasHuacales>();
 	public string Filtro { get; set; }
@@ -147,12 +148,16 @@
 
 			if (Filtro == "Cantidad" && int.TryParse(ValorFiltro, out var cantidad))
 			{
-				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Cantidad == cantidad);
+				ListaEntradasHuacales = (await entradaHuacalesService.Listar(e => e.IdEntrada > 0))
+					.Where(d => d.DetalleHuacales.Sum(d => d.Cantidad) == cantidad)
+					.ToList();
 			}
 
-			if (Filtro == "Precio" && decimal.TryParse(ValorFiltro, out var precio))
+			if (Filtro == "Importe" && decimal.TryParse(ValorFiltro, out var importe))
 			{
-				ListaEntradasHuacales = await entradaHuacalesService.Listar(e => e.Precio == precio);
+				ListaEntradasHuacales = (await entradaHuacalesService.Listar(e => e.IdEntrada > 0))
+					.Where(d => d.DetalleHuacales.Sum(d => d.Cantidad * d.Precio) == importe)
+					.ToList();
 			}
 		}
 	}
