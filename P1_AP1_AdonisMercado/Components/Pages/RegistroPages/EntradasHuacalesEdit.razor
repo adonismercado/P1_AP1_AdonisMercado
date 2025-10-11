@@ -165,7 +165,7 @@
 	private void RemoverDetalle(EntradasHuacalesDetalle detalle)
 	{
 		EntradasHuacales.DetalleHuacales.Remove(detalle);
-		DetalleSeleccionado = new EntradasHuacalesDetalle();
+		DetalleSeleccionado = detalle;
 	}
 
 	public async Task Guardar()
